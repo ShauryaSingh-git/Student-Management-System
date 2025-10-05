@@ -10,28 +10,25 @@ using namespace std;
 // teacher login--login and signup
 // admin login  --login and signup
 // exit
-
-// user.txt Format --> username,password,email --> everything is comma seperated and next user is found in the next line of the user file
-void studentSignup()
+class Student{
+    private:
+    string username, password, email;
+    int marks;
+    public:
+    Student()
+    {}
+    void studentSignup()
 {
     fstream file("StudentUser.txt", ios::app | ios::out);
-    string username, password, email;
     bool isRegistered = false;
     bool validEmail = false;
-
-    cout << "Enter username: ";
-    cin >> username;
-    cout << "Enter password: ";
-    cin >> password;
-    while (password.length() < 6 || password.find(' ') != string::npos)
+    cout<<"Choose login with username or email"<<endl;
+    string choice;
+    cin>>choice;
+    if(choice=="email")
     {
-        cout << "Password must be at least 6 characters long. Please try again." << endl;
-        cout << "Enter password: ";
-        cin >> password;
-    }
-
-    while (validEmail == false)
-    {
+        while (validEmail == false)
+        {
         cout << "Enter email: ";
         cin >> email;
         if (email.find('@') != string::npos && email.find('.') != string::npos)
@@ -43,9 +40,37 @@ void studentSignup()
             cout << "Invalid email format. Please try again." << endl;
         }
     }
+    }
+
+    else if(choice=="username")
+    {
+    cout << "Enter username: ";
+    cin >> username;
+    }
+    
+    else
+    {
+        cout<<"Invalid choice"<<endl;
+        studentSignup();
+        return;
+    }
+    
+    cout << "Enter password: ";
+    cin >> password;
+    while (password.length() < 6 || password.find(' ') != string::npos)
+    {
+        cout << "Password must be at least 6 characters long. Please try again." << endl;
+        cout << "Enter password: ";
+        cin >> password;
+    }
+
+    
     file << username << "," << password << "," << email << endl;
     file.close();
 }
+};
+
+
 
 void teacherSignup()
 {
@@ -144,9 +169,36 @@ void teacherLogin()
     file.close();
 }
 
+void studentMenu(string line)
+{
+    cout<<"Student Menu"<<endl;
+    cout<<"1. View My Details"<<endl;
+    cout<<"2. View My Marks"<<endl;
+    cout<<"3. Exit"<<endl;
+    int choice;
+    cin>>choice;
+    switch(choice)
+    {
+        case 1:
+        //it is the section where we will view the details of the students
+            break;
+        case 2:
+        //it is the section where we will view the marks of the students
+            break;
+        case 3:
+        exit(0);
+        default:
+        cout<<"Invalid choice"<<endl;
+        cout<<endl;
+        studentMenu(line);
+        break;
+    }
+}
+
 int main()
 {
-    // studentSignup();
-    studentLogin();
-    return 0;
+//     // studentSignup();
+//     studentLogin();
+//     return 0;
+// 
 }
