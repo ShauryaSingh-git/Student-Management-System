@@ -3,6 +3,8 @@
 #include <unordered_set>
 #include <fstream>
 #include <string>
+#include <sstream>
+#include <limits>
 
 using namespace std;
 
@@ -18,77 +20,13 @@ class Student{
     Student()
     {}
     void studentSignup()
-{
+    {
     fstream file("StudentUser.txt", ios::app | ios::out);
-    bool isRegistered = false;
-    bool validEmail = false;
-    cout<<"Choose login with username or email"<<endl;
-    string choice;
-    cin>>choice;
-    if(choice=="email")
-    {
-        while (validEmail == false)
-        {
-        cout << "Enter email: ";
-        cin >> email;
-        if (email.find('@') != string::npos && email.find('.') != string::npos)
-        {
-            validEmail = true;
-        }
-        else
-        {
-            cout << "Invalid email format. Please try again." << endl;
-        }
-    }
-    }
-
-    else if(choice=="username")
-    {
-    cout << "Enter username: ";
-    cin >> username;
-    }
-    
-    else
-    {
-        cout<<"Invalid choice"<<endl;
-        studentSignup();
-        return;
-    }
-    
-    cout << "Enter password: ";
-    cin >> password;
-    while (password.length() < 6 || password.find(' ') != string::npos)
-    {
-        cout << "Password must be at least 6 characters long. Please try again." << endl;
-        cout << "Enter password: ";
-        cin >> password;
-    }
-
-    
-    file << username << "," << password << "," << email << endl;
-    file.close();
-}
-};
-
-
-
-void teacherSignup()
-{
-    fstream file("TeacherUser.txt", ios::app);
-    string username, password, email;
-    bool isRegistered = false;
     bool validEmail = false;
 
     cout << "Enter username: ";
     cin >> username;
-    cout << "Enter password: ";
-    cin >> password;
-    while (password.length() < 6 || password.find(' ') != string::npos || password.find("1234567890") != string::npos)
-    {
-        cout << "Password must be at least 6 characters long. Please try again." << endl;
-        cout << "Enter password: ";
-        cin >> password;
-    }
+
     while (validEmail == false)
     {
         cout << "Enter email: ";
@@ -102,30 +40,81 @@ void teacherSignup()
             cout << "Invalid email format. Please try again." << endl;
         }
     }
+
+    cout << "Enter password: ";
+    cin >> password;
+    while (password.length() < 6 || password.find(' ') != string::npos)
+    {
+        cout << "Password must be at least 6 characters long. Please try again." << endl;
+        cout << "Enter password: ";
+        cin >> password;
+    }
+
+    
     file << username << "," << password << "," << email << endl;
+    file.close();
 }
 
-void studentLogin()
-{
+    void studentLogin()
+        {
     ifstream file("StudentUser.txt", ios::in);
     string username, password, email, line;
+    string usernamecheck,emailcheck,passwordcheck;
     bool isRegistered = false;
     while (isRegistered == false)
     {
-        cout << "Enter username: ";
-        cin >> username;
-        cout << "Enter password";
-        cin >> password;
-        cout << "Enter email: ";
-        cin >> email;
-        while (getline(file, line))
+        cout<<"Login Menu"<<endl;
+        cout<<" Choose login with username or email"<<endl;
+        string choice;
+        cin>>choice;
+        if(choice=="email")
         {
-            if (line == username + "," + password + "," + email)
+            cout << "Enter email: ";
+            cin >> email;
+            cout << "Enter password: ";
+            cin >> password;
+            while (getline(file, line))
             {
-                isRegistered = true;
-                cout << "Login successful!" << endl;
-                break;
+                stringstream ss(line);
+                getline(ss, usernamecheck, ',');
+                getline(ss, passwordcheck, ',');
+                getline(ss, emailcheck, ',');
+                if(emailcheck==email && passwordcheck==password)
+                {
+                    isRegistered = true;
+                    cout << "Login successful!" << endl;
+                    break;
+                }
+
             }
+
+        }
+
+        else if(choice=="username")
+        {
+            cout << "Enter username: ";
+            cin >> username;
+            cout << "Enter password: ";
+            cin >> password;
+            while(getline(file, line))
+            {
+                stringstream ss(line);
+                getline(ss, usernamecheck, ',');
+                getline(ss, passwordcheck, ',');
+                getline(ss, emailcheck, ',');
+                if(usernamecheck==username && passwordcheck==password)
+                {
+                    isRegistered = true;
+                    cout << "Login successful!" << endl;
+                    break;
+                }
+
+            }
+        }
+        else
+        {
+            cout<<"Invalid choice"<<endl;
+            continue;
         }
         file.clear();
         file.seekg(0, ios::beg);
@@ -134,6 +123,49 @@ void studentLogin()
             cout << "Invalid credentials. Please try again." << endl;
         }
     }
+    file.close();
+    }
+};
+
+class Teacher{
+    private:
+    string username,password,email;
+    public:
+    Teacher()
+    {}
+    void teacherSignup()
+{
+    fstream file("TeacherUser.txt", ios::app | ios::out);
+    bool validEmail = false;
+
+    cout << "Enter username: ";
+    cin >> username;
+
+    while (validEmail == false)
+    {
+        cout << "Enter email: ";
+        cin >> email;
+        if (email.find('@') != string::npos && email.find('.') != string::npos)
+        {
+            validEmail = true;
+        }
+        else
+        {
+            cout << "Invalid email format. Please try again." << endl;
+        }
+    }
+
+    cout << "Enter password: ";
+    cin >> password;
+    while (password.length() < 6 || password.find(' ') != string::npos)
+    {
+        cout << "Password must be at least 6 characters long. Please try again." << endl;
+        cout << "Enter password: ";
+        cin >> password;
+    }
+
+    
+    file << username << "," << password << "," << email << endl;
     file.close();
 }
 
@@ -168,6 +200,7 @@ void teacherLogin()
     }
     file.close();
 }
+};
 
 void studentMenu(string line)
 {
@@ -197,8 +230,7 @@ void studentMenu(string line)
 
 int main()
 {
-//     // studentSignup();
-//     studentLogin();
-//     return 0;
-// 
+Student student;
+// student.studentSignup();
+// student.studentLogin();
 }
