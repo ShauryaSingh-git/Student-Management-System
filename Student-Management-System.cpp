@@ -23,7 +23,10 @@ class Student{
     {
     fstream file("StudentUser.txt", ios::app | ios::out);
     bool validEmail = false;
-
+    bool complete=false;
+    
+    while(complete==false)
+    {
     cout << "Enter username: ";
     cin >> username;
 
@@ -50,6 +53,30 @@ class Student{
         cin >> password;
     }
 
+    //here we will check if the username or email already exists in the file
+    //if it exists the we will prompt the user to enter a diffrent username or email whichever is already exists
+    //if both are unique then we will store the data in the file
+    ifstream filecheck("StudentUser.txt",ios::in);
+    string usernamecheck,emailcheck,line;
+    while(getline(filecheck,line))
+    {
+        stringstream ss(line);
+        getline(ss,usernamecheck,',');
+        getline(ss,emailcheck,',');
+        if(usernamecheck==username)
+        {
+            cout<<"Username already exists. Please try again or enter a diffrent username."<<endl;
+            break;
+        }
+        else if(emailcheck==email)
+        {
+            cout<<"Email already exists. Please try again or enter a diffrent email."<<endl;
+            break;
+        }
+    }
+    complete=true;
+    filecheck.close();
+}
     
     file << username << "," << password << "," << email << endl;
     file.close();
@@ -169,27 +196,66 @@ class Teacher{
     file.close();
 }
 
-void teacherLogin()
-{
+    void teacherLogin()
+    {
     ifstream file("TeacherUser.txt", ios::in);
     string username, password, email, line;
+    string usernamecheck,emailcheck,passwordcheck;
     bool isRegistered = false;
     while (isRegistered == false)
     {
-        cout << "Enter username: ";
-        cin >> username;
-        cout << "Enter password";
-        cin >> password;
-        cout << "Enter email: ";
-        cin >> email;
-        while (getline(file, line))
+        cout<<"Login Menu"<<endl;
+        cout<<" Choose login with username or email"<<endl;
+        string choice;
+        cin>>choice;
+        if(choice=="email")
         {
-            if (line == username + "," + password + "," + email)
+            cout << "Enter email: ";
+            cin >> email;
+            cout << "Enter password: ";
+            cin >> password;
+            while (getline(file, line))
             {
-                isRegistered = true;
-                cout << "Login successful!" << endl;
-                break;
+                stringstream ss(line);
+                getline(ss, usernamecheck, ',');
+                getline(ss, passwordcheck, ',');
+                getline(ss, emailcheck, ',');
+                if(emailcheck==email && passwordcheck==password)
+                {
+                    isRegistered = true;
+                    cout << "Login successful!" << endl;
+                    break;
+                }
+
             }
+
+        }
+
+        else if(choice=="username")
+        {
+            cout << "Enter username: ";
+            cin >> username;
+            cout << "Enter password: ";
+            cin >> password;
+            while(getline(file, line))
+            {
+                stringstream ss(line);
+                getline(ss, usernamecheck, ',');
+                getline(ss, passwordcheck, ',');
+                getline(ss, emailcheck, ',');
+                if(usernamecheck==username && passwordcheck==password)
+                {
+                    isRegistered = true;
+                    cout << "Login successful!" << endl;
+                    break;
+                }
+
+            }
+        }
+        else
+        {
+            cout<<"Invalid choice"<<endl;
+            continue;
         }
         file.clear();
         file.seekg(0, ios::beg);
@@ -199,7 +265,7 @@ void teacherLogin()
         }
     }
     file.close();
-}
+    }
 };
 
 void studentMenu(string line)
@@ -233,4 +299,7 @@ int main()
 Student student;
 // student.studentSignup();
 // student.studentLogin();
+// Teacher teacher;
+// teacher.teacherSignup();
+// teacher.teacherLogin();
 }

@@ -1,1 +1,2 @@
-    // studentSignup();
+student.studentSignup();
+// student.studentLogin();
