@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <limits>
+#include <functional>
 
 using namespace std;
 
@@ -12,11 +13,49 @@ using namespace std;
 // teacher login--login and signup
 // admin login  --login and signup
 // exit
-class Student{
-    private:
+class user{
+    protected:
     string username, password, email;
     int marks;
+    string hasher(const string& password)
+    {
+        hash<string> hashh;
+        size_t hashed=hashh(password);
+        return to_string(hashed);
+    }
+
+};
+class Student:public user{
+    private:
+    //studet menu will be in private so that only logged in student can access it
+    void studentMenu(const string& username)
+{
+    cout<<"Student Menu"<<endl;
+    cout<<"1. View My Details"<<endl;
+    cout<<"2. View My Marks"<<endl;
+    cout<<"3. Exit"<<endl;
+    int choice;
+    cin>>choice;
+    switch(choice)
+    {
+        case 1:
+        //it is the section where we will view the details of the students
+            break;
+        case 2:
+        //it is the section where we will view the marks of the students
+            break;
+        case 3:
+        exit(0);
+        default:
+        cout<<"Invalid choice"<<endl;
+        cout<<endl;
+        studentMenu(username);
+        break;
+    }
+}
+
     public:
+    
     Student()
     {}
     void studentSignup()
@@ -78,16 +117,19 @@ class Student{
     filecheck.close();
 }
     
-    file << username << "," << password << "," << email << endl;
+    file << username << "," << hasher(password) << "," << email << endl;
     file.close();
 }
 
-    void studentLogin()
+
+//this is the login function for student
+    string studentLogin()
         {
     ifstream file("StudentUser.txt", ios::in);
     string username, password, email, line;
     string usernamecheck,emailcheck,passwordcheck;
     bool isRegistered = false;
+    string loggeduser="";
     while (isRegistered == false)
     {
         cout<<"Login Menu"<<endl;
@@ -106,10 +148,11 @@ class Student{
                 getline(ss, usernamecheck, ',');
                 getline(ss, passwordcheck, ',');
                 getline(ss, emailcheck, ',');
-                if(emailcheck==email && passwordcheck==password)
+                if(emailcheck==email && passwordcheck==hasher(password))
                 {
                     isRegistered = true;
                     cout << "Login successful!" << endl;
+                    loggeduser=username;
                     break;
                 }
 
@@ -129,10 +172,11 @@ class Student{
                 getline(ss, usernamecheck, ',');
                 getline(ss, passwordcheck, ',');
                 getline(ss, emailcheck, ',');
-                if(usernamecheck==username && passwordcheck==password)
+                if(usernamecheck==username && passwordcheck==hasher(password))
                 {
                     isRegistered = true;
                     cout << "Login successful!" << endl;
+                    loggeduser=username;
                     break;
                 }
 
@@ -151,10 +195,11 @@ class Student{
         }
     }
     file.close();
+    return loggeduser;
     }
 };
 
-class Teacher{
+class Teacher:public user{
     private:
     string username,password,email;
     public:
@@ -202,6 +247,7 @@ class Teacher{
     string username, password, email, line;
     string usernamecheck,emailcheck,passwordcheck;
     bool isRegistered = false;
+    string loggeduser="";
     while (isRegistered == false)
     {
         cout<<"Login Menu"<<endl;
@@ -223,6 +269,7 @@ class Teacher{
                 if(emailcheck==email && passwordcheck==password)
                 {
                     isRegistered = true;
+                    loggeduser=username;
                     cout << "Login successful!" << endl;
                     break;
                 }
@@ -246,6 +293,7 @@ class Teacher{
                 if(usernamecheck==username && passwordcheck==password)
                 {
                     isRegistered = true;
+                    loggeduser=username;
                     cout << "Login successful!" << endl;
                     break;
                 }
@@ -268,31 +316,7 @@ class Teacher{
     }
 };
 
-void studentMenu(string line)
-{
-    cout<<"Student Menu"<<endl;
-    cout<<"1. View My Details"<<endl;
-    cout<<"2. View My Marks"<<endl;
-    cout<<"3. Exit"<<endl;
-    int choice;
-    cin>>choice;
-    switch(choice)
-    {
-        case 1:
-        //it is the section where we will view the details of the students
-            break;
-        case 2:
-        //it is the section where we will view the marks of the students
-            break;
-        case 3:
-        exit(0);
-        default:
-        cout<<"Invalid choice"<<endl;
-        cout<<endl;
-        studentMenu(line);
-        break;
-    }
-}
+
 
 int main()
 {
@@ -303,3 +327,19 @@ Student student;
 // teacher.teacherSignup();
 // teacher.teacherLogin();
 }
+
+
+
+
+
+
+
+//log-
+
+/*
+2.11.2025
+created hashed password
+created user class and added username,password,email as protected members
+fixed studnet signup and login to use hashed password
+
+*/
